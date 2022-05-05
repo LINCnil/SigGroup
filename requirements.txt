@@ -1,0 +1,4 @@
+bottle
+pyyaml
+gunicorn
+bottle_cors_plugin

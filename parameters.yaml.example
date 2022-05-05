@@ -1,0 +1,13 @@
+site:
+  url: "https://0.0.0.0:9093/"
+  host_name: "0.0.0.0"
+  port: 9093
+trust:
+  url: "https://localhost:9091/"
+  host_name: "localhost"
+  port: 9091
+authority:
+  url: "https://localhost:9092/"
+  host_name: "localhost"
+  port: 9092
+

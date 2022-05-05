@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" data-fr-scheme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="static/dsfr.min.css">
+
+    <meta name="theme-color" content="#000091">
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+    </style>
+    <title>Trusted third party</title>
+</head>
+
+<body>
+    <div class="fr-container" role="main">
+        <h1 style="text-align: center;background-color: yellow;">Trusted third party website</h1>
+
+        <div class="fr-highlight" style="margin-bottom: 2.5rem;">
+            <p> This page simulates one or many trusted third parties that can be used to verify the actual age of
+                users.</p>
+        </div>
+
+
+        <h2>Ask for the signature of a challenge</h2>
+        <p>
+            Select a user which is already registered on the platform and a trusted third party. The signature can only
+            occured if the selected user has the required age.
+        </p>
+
+        <form onsubmit="upload_and_sign(); return false;">
+            <p style="max-width: 400px;">
+                <label class="fr-label" for="trustedId">Select a trusted party identification number</label>
+                <select class="fr-input" type="number" id="trustedId" required>
+                </select>
+            </p>
+
+            <p style="max-width: 400px;">
+                <label class="fr-label" for="IndividualSignId">Select a registered user</label>
+                <select class="fr-input" id="IndividualSignId" required>
+                </select>
+            </p>
+
+            <div class="fr-upload-group">
+                <p>
+                    <label class="fr-label" for="fileUploaded">Select JSON challenge provided by the website</label>
+                    <input class="fr-upload" type="file" id="fileUploaded" accept=".json" required>
+                </p>
+            </div>
+
+            <p>
+                <input class="fr-btn" type="submit" value="Sign the challenge" />
+            </p>
+        </form>
+
+        <h2>Register users</h2>
+        <div class="fr-highlight" style="margin-bottom: 2.5rem;">
+            <p>This section allows to simulate users registered in trusted third parties.</p>
+        </div>
+
+
+        <form onsubmit="registerAge(); return false;">
+            <p style="max-width: 400px;">
+                <label class="fr-label" for="IndividualId">Name of the user</label>
+                <input class="fr-input" id="IndividualId" value="Eve" required />
+
+                <span class="fr-hint-text">
+                    This name will be used to check the age. It will erase previously registered users
+                    if the same name is used twice.
+                </span>
+            </p>
+
+            <p style="max-width: 400px;">
+                <label class="fr-label" for="AgeId">Age of the user</label>
+                <input class="fr-input" type="number" id="AgeId" required />
+            </p>
+
+            <p>
+                <input class="fr-btn" type="submit" value="Register this user" />
+        </form>
+
+        <h2>List of existing users</h2>
+        <div class="fr-highlight" style="margin-bottom: 2.5rem;">
+            <p>This section list all users that are registered on the platforms.</p>
+        </div>
+
+        <table id="user_list"
+            style="font-family: arial, sans-serif;border-collapse: collapse;width: 20%;border: 1px solid black;">
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+            </tr>
+        </table>
+
+        <div class="fr-highlight" style="margin-bottom: 2.5rem;">
+            <p>Please note that users are currently registered on all trusted third party (which should not be the case
+                in real-life scenarios), and that registration is currently very basic and declarative.</p>
+        </div>
+
+        <h2>List of existing trusted third parties</h2>
+        <div class="fr-highlight" style="margin-bottom: 2.5rem;">
+            <p>This section list all third parties that has been registered.New trusted third parties can be created
+                from the <a href="" id="authority_link"> certification authority website</a>.</p>
+        </div>
+
+        <table id="thirdparty_list"
+            style="font-family: arial, sans-serif;border-collapse: collapse;width: 20%;border: 1px solid black;">
+            <tr>
+                <th>id</th>
+            </tr>
+        </table>
+        <br>
+        <input class="fr-btn" type="button" value="Refresh list" onclick="refresh_values()" />
+    </div>
+
+
+    <!-- Script en version es6 module et nomodule pour les navigateurs le ne supportant pas -->
+    <script type="module" src="static/dsfr.module.min.js"></script>
+    <script type="text/javascript" nomodule src="static/dsfr.nomodule.min.js"></script>
+    <script type="text/javascript">
+        // Port and hosts of the sites
+        var authority_url = "{{urls['authority']['url']}}";
+        var age_verifier_url = "{{urls['trust']['url']}}";
+
+        authority_link = document.getElementById("authority_link");
+        authority_link.setAttribute("href", authority_url);
+
+
+        function refresh_values() {
+
+            function removeOptions(selectElement) {
+                var i, L = selectElement.options.length - 1;
+                for (i = L; i >= 0; i--) {
+                    selectElement.remove(i);
+                }
+            }
+
+            function removeRows(tableElement) {
+                var i, L = tableElement.rows.length - 1;
+                for (i = L; i >= 1; i--) {
+                    tableElement.deleteRow(-1);
+                }
+            }
+
+
+            fetch(authority_url + "number_certificates")
+                .then((response) => response.json())
+                .then((number_certificates) => {
+                    let trustedId = document.getElementById("trustedId");
+                    let thirdparty_list = document.getElementById("thirdparty_list");
+
+                    removeOptions(trustedId);
+                    removeRows(thirdparty_list);
+                    for (let i = 1; i < number_certificates.number+1; i++) {
+                        let option = document.createElement("option");
+                        option.value = i;
+                        option.text = i;
+                        trustedId.add(option);
+
+                        let newRow = thirdparty_list.insertRow(-1);
+                        let newCellid = newRow.insertCell(0);
+                        let newTextCelldid = document.createTextNode(i);
+                        newCellid.appendChild(newTextCelldid);
+                    }
+                }
+                );
+
+            fetch(age_verifier_url + "list_users")
+                .then((response) => response.json())
+                .then((number_users) => {
+                    let IndividualSignId = document.getElementById("IndividualSignId");
+                    let user_list = document.getElementById("user_list");
+                    removeOptions(IndividualSignId);
+                    removeRows(user_list);
+
+                    for (const [key, value] of Object.entries(number_users)) {
+                        let option = document.createElement("option");
+                        option.value = key;
+                        option.text = key + " (" + value+ " years old)";
+                        IndividualSignId.add(option);
+
+                        let newRow = user_list.insertRow(-1);
+                        let newCellid = newRow.insertCell(0);
+                        let newTextCelldid = document.createTextNode(key);
+                        let newCellage = newRow.insertCell(1);
+                        let newTextCelldage = document.createTextNode(value);
+                        newCellid.appendChild(newTextCelldid);
+                        newCellage.appendChild(newTextCelldage);
+                    }
+                }
+                );
+        }
+
+        refresh_values();
+
+        function sign(data, trusted, id) {
+            fetch(age_verifier_url + "sign?trusted=" + trusted + "&id=" + id, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data_from_trust) => {
+                    if (data_from_trust.majeur && data_from_trust.user) {
+                        var dataStr =
+                            "data:text/json;charset=utf-8," +
+                            encodeURIComponent(JSON.stringify(data_from_trust));
+                        var downloadAnchorNode = document.createElement("a");
+                        downloadAnchorNode.setAttribute("href", dataStr);
+                        downloadAnchorNode.setAttribute("download", "signature" + ".json");
+                        document.body.appendChild(downloadAnchorNode); // required for firefox
+                        downloadAnchorNode.click();
+                        downloadAnchorNode.remove();
+                    } else {
+                        if (data_from_trust.user) {
+                            alert("User does not match the required age");
+                        } else {
+                            alert("User doesn't exist");
+                        }
+                    }
+                });
+        }
+
+        // retrieves the crypto parameters
+        function get_params() {
+            console.log("Retrieving crypto parameters");
+            return fetch(authority_url + "crypto_parameters").then(
+                (response) => response.json()
+            );
+        }
+
+        // Retrieves the number of parties
+        function count_parties() {
+            console.log("Counting the trusted parties");
+            return fetch(authority_url + "number_certificates").then(
+                (response) => response.json()
+            );
+        }
+
+        // checks the existence of a given trusted party
+        function checkingExistence(trusted) {
+            console.log("Checking existence of the trusted party");
+            return count_parties().then(
+                (number_certificates) =>
+                    trusted < number_certificates.number + 1 &&
+                    trusted > 0 &&
+                    Number.isInteger(trusted)
+            );
+        }
+
+        function upload_and_sign() {
+            let id = document.getElementById("IndividualSignId").value;
+            let file = document.getElementById("fileUploaded").files[0];
+            let trusted = parseInt(document.getElementById("trustedId").value);
+            if (file) {
+                var reader = new FileReader();
+                reader.readAsText(file, "UTF-8");
+                reader.onload = function (evt) {
+                    challenge = JSON.parse(evt.target.result);
+                    checkingExistence(trusted).then((exists) => {
+                        if (exists) {
+                            get_params().then((crypto_params) =>
+                                sign(Object.assign(challenge, crypto_params), trusted, id)
+                            );
+                        } else {
+                            console.log("This trusted party doesn't exist.");
+                        }
+                    });
+                };
+                reader.onerror = function (evt) {
+                    console.log("Error reading file");
+                };
+            } else {
+                console.log("No file selected");
+            }
+        }
+
+        function registerAge(number_certificates) {
+            let registered_age = document.getElementById("AgeId").valueAsNumber;
+            let id = document.getElementById("IndividualId").value;
+            fetch(age_verifier_url +
+                "registerAge?registered_age=" +
+                registered_age +
+                "&id=" +
+                id,
+                { method: "POST" }
+            );
+            document.getElementById("AgeId").value = "";
+            document.getElementById("IndividualId").value = "";
+            alert(`Registration done: age=${registered_age}, id=${id}.`);
+            refresh_values();
+        }
+    </script>
+</body>
+
+</html>

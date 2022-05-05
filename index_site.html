@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en" data-fr-scheme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="static/dsfr.min.css">
+
+        <meta name="theme-color" content="#000091">
+
+        <title>Restricted website</title>
+    </head>
+    <body>
+        
+        <h1 style="text-align: center;background-color: green;">Website restricted to person above <input class="fr-input" type="number" id="AgeId" value="18" style="width: 200px;  display: block;margin-right: auto;margin-left: auto;" required /> years old</h1>
+        <div class="fr-container" role="main">
+
+
+            <h2>Verify your age </h2>
+            <label class="fr-label" for="TrustedpartyId">You must prove from a <a href="" id="trusted_party_link">trusted third party website</a> that you have the required age.</label>
+            
+            <p style="max-width: 400px;">
+            <form onsubmit="startVerif_safe(); return false;">
+                <input type="submit" class="fr-btn" value="Download challenge" />
+            </form>
+            </p>
+            <form onsubmit="upload(); return false;">
+                <div class="fr-upload-group">
+                    <p>
+                        <label class="fr-label" for="fileUploaded">Upload and verify the signed challenge
+                        </label>
+                        <input class="fr-upload" type="file" id="fileUploaded" accept=".json" required>
+                    </p>
+                </div>
+                <p>
+                    <input type="submit" class="fr-btn" value="Upload signed challenge"/>
+                </p>
+            </form>
+
+            <p style="max-width: 400px;">
+                <label class="fr-label" for="ValidityId">Validity of the token (in seconds)</label>
+                <input class="fr-input" type="number" id="ValidityId" value="60" required />
+            </p>
+
+
+           
+        </div>
+
+        <!-- Script en version es6 module et nomodule pour les navigateurs le ne supportant pas -->
+        <script type="module" src="static/dsfr.module.min.js"></script>
+        <script type="text/javascript" nomodule src="static/dsfr.nomodule.min.js"></script>
+        <script type="text/javascript">
+            var authority_url = "{{urls['authority']['url']}}";
+            var age_verifier_url =  "{{urls['trust']['url']}}";
+            var site_url =  "{{urls['site']['url']}}";
+
+            trusted_party_link = document.getElementById("trusted_party_link");
+            trusted_party_link.setAttribute("href", age_verifier_url);
+
+            // Print the number of trusted parties
+            function print_trusted() {
+                count_parties().then((number_certificates) =>
+                    alert(
+                        "There are " +
+                        number_certificates.number +
+                        " trusted parties available."
+                    )
+                );
+            }
+
+            // Returns a json {revoked_list : [list of revoked tk]}
+            function get_revoked() {
+                console.log("Retrieving revoked parties");
+                return fetch(authority_url + "revoked_list")
+                    .then((response) => response.json());
+            }
+
+            // Retrieves the crypto parameters
+            function get_params() {
+                console.log("Retrieving crypto parameters");
+                return fetch(authority_url + "crypto_parameters")
+                    .then((response) => response.json());
+            }
+
+            // Retrieves the number of parties
+            function count_parties() {
+                console.log("Counting the trusted parties");
+                return fetch(authority_url + "number_certificates")
+                    .then((response) => response.json());
+            }
+
+            // checks the existence of a given trusted party
+            function checkingExistence(trusted) {
+                console.log("Checking existence of the trusted party");
+                return count_parties().then(
+                    (number_certificates) =>
+                    trusted < number_certificates.number + 1 &&
+                    trusted > 0 &&
+                    Number.isInteger(trusted)
+                );
+            }
+
+            // Retrieves a timestamped nonce and stores it (along with required age and validity)
+            function getNonce(required_age, validity) {
+                console.log("Retrieving nonce.");
+                return fetch(
+                    site_url + "nonce?required_age=" +
+                    required_age +
+                    "&validity=" +
+                    validity
+                )
+                    .then((response) => response.json());
+            }
+
+            // Receives a signature, an age and a revoked list, checks whether it all match
+            // The second part of the function (conditions on "signature.user" and "signature.majeur") can only be used if we use the fast unsafe way.
+            // In regular cases, the trust server will not provide any signature.
+            function verif(signature) {
+                console.log("Verifying signature.");
+                if (signature.user && signature.majeur) {
+                    get_revoked()
+                        .then((revoked_list) => Object.assign(signature, revoked_list))
+                        .then((sig_and_revok) =>
+                            get_params().then((params) => Object.assign(sig_and_revok, params))
+                        )
+                        .then((params) =>
+                            fetch(site_url + "verif", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(params),
+                            })
+                            .then((response) => response.json())
+                            .then((validity) => alert(validity.response))
+                        );
+                } else {
+                    if (signature.user) {
+                        alert("User does not match the required age");
+                    } else {
+                        alert("The challenge has not been signed or signed incorrectly.");
+                    }
+                }
+            }
+
+            // Retrieve uploaded file and checks the authenticity of the signature
+            function upload() {
+                let file = document.getElementById("fileUploaded").files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.readAsText(file, "UTF-8");
+                    reader.onload = function (evt) {
+                        signature = JSON.parse(evt.target.result);
+                        console.log("Retrieving crypto parameters");
+                        get_params().then((params) => Object.assign(signature, params));
+                        verif(signature);
+                    };
+                    reader.onerror = function (evt) {
+                        alert("Error reading file");
+                    };
+                } else {
+                    alert("No file selected");
+                }
+            }
+
+            // Get signature from trusted party: only used for fast unsafe tests.
+            function sign(nonce, required_age, trusted) {
+                console.log("Retrieving signature of the third party.");
+                let id = document.getElementById("IdentifierId").valueAsNumber;
+                return get_params()
+                    .then((params) => Object.assign(nonce, params))
+                    .then((data) => {
+                        console.log("Getting signature from trusted party");
+                        return fetch(age_verifier_url + "sign?trusted=" +
+                            trusted +
+                            "&id=" +
+                            id,
+                            {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(data),
+                            }
+                        ).then((response) => response.json());
+                    });
+            }
+
+            function startVerif_safe() {
+                let required_age = document.getElementById("AgeId").valueAsNumber;
+                let validity = document.getElementById("ValidityId").valueAsNumber;
+                if (isNaN(required_age) || isNaN(validity)) {
+                    alert("Missing age to be checked or validity duration");
+                    return;
+                }
+                getNonce(required_age, validity).then((nonce) => {
+                    var dataStr =
+                        "data:text/json;charset=utf-8," +
+                        encodeURIComponent(JSON.stringify(nonce));
+                    var downloadAnchorNode = document.createElement("a");
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", "nonce" + ".json");
+                    document.body.appendChild(downloadAnchorNode); // required for firefox
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                });
+            }
+
+            function startVerif_fast() {
+                let required_age = document.getElementById("AgeId").valueAsNumber;
+                let trusted = document.getElementById("TrustedId").valueAsNumber;
+                let validity = document.getElementById("ValidityId").valueAsNumber;
+                if (isNaN(required_age) || isNaN(trusted) || isNaN(validity)) {
+                    alert(
+                        "Missing age to be checked, validity duration or trusted party"
+                    );
+                    return;
+                }
+                console.log(
+                    "Checking whether the trusted party exists and sending the nonce"
+                );
+                checkingExistence(trusted).then((exists) => {
+                    if (exists) {
+                        getNonce(required_age, validity).then((nonce) =>
+                            sign(nonce, required_age, trusted).then((signature) =>
+                                verif(signature)
+                            )
+                        );
+                    } else {
+                        alert("This trusted party doesn't exist");
+                    }
+                });
+            }
+        </script>
+    </body>
+</html>

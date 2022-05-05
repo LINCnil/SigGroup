@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en" data-fr-scheme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="static/dsfr.min.css">
+
+    <meta name="theme-color" content="#000091">
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+    </style>
+    <title>Certification authority website</title>
+</head>
+
+<body>
+    <div class="fr-container" role="main">
+        <h1 style="text-align: center;background-color: red;">Certification authority website</h1>
+
+        <h2>Create new trusted party</h2>
+        <p>
+            <button class="fr-btn" onClick="new_trusted()">
+                Create new trusted party
+            </button>
+            <button class="fr-btn" onClick="count_authorities()">
+                Count trusted parties
+            </button>
+        </p>
+
+        <h2>Revoke trusted party</h2>
+
+        <form onsubmit="revoke(); return false;">
+            <p style="max-width: 400px;">
+                <label class="fr-label" for="RevikedId">Trusted party id to revoke:</label>
+                <select class="fr-input" type="number" id="RevokedId" required />
+
+            <div class="fr-highlight" style="margin-bottom: 2.5rem;">
+                Note that a revoked trusted party still exists, but its revokation
+                certificate is added to a list (and checked by the requiring site).
+            </div>
+            </p>
+            <input type="submit" class="fr-btn" value="Revoke trusted party" />
+        </form>
+
+        <h2>List of existing trusted third parties</h2>
+        <div class="fr-highlight" style="margin-bottom: 2.5rem;">
+            <p>This section list all third parties that has been registered.New trusted third parties can be created
+                from the <a href="" id="authority_link"> certification authority website</a>.</p>
+        </div>
+
+        <table id="thirdparty_list"
+            style="font-family: arial, sans-serif;border-collapse: collapse;width: 20%;border: 1px solid black;">
+            <tr>
+                <th>id</th>
+            </tr>
+        </table>
+        <br>
+        <input class="fr-btn" type="button" value="Refresh list" onclick="refresh_values()" />
+    </div>
+
+    <!-- Script en version es6 module et nomodule pour les navigateurs le ne supportant pas -->
+    <script type="module" src="static/dsfr.module.min.js"></script>
+    <script type="text/javascript" nomodule src="static/dsfr.nomodule.min.js"></script>
+    <script type="text/javascript">
+        var authority_url = "{{urls['authority']['url']}}";
+        var age_verification_url = "{{urls['trust']['url']}}";
+
+        function refresh_values() {
+
+            function removeRows(tableElement) {
+                var i, L = tableElement.rows.length - 1;
+                for (i = L; i >= 1; i--) {
+                    tableElement.deleteRow(-1);
+                }
+            }
+
+            function removeOptions(selectElement) {
+                var i, L = selectElement.options.length - 1;
+                for (i = L; i >= 0; i--) {
+                    selectElement.remove(i);
+                }
+            }
+
+
+            fetch(authority_url + "number_certificates")
+                .then((response) => response.json())
+                .then((number_certificates) => {
+                    let thirdparty_list = document.getElementById("thirdparty_list");
+                    let RevokedId = document.getElementById("RevokedId");
+
+                    removeOptions(RevokedId);
+                    removeRows(thirdparty_list);
+                    for (let i = 1; i < number_certificates.number + 1; i++) {
+                        let option = document.createElement("option");
+                        option.value = i;
+                        option.text = i;
+                        RevokedId.add(option);
+
+                        let newRow = thirdparty_list.insertRow(-1);
+                        let newCellid = newRow.insertCell(0);
+                        let newTextCelldid = document.createTextNode(i);
+                        newCellid.appendChild(newTextCelldid);
+                    }
+                }
+                );
+        }
+
+        refresh_values();
+
+        // Prints the number of authorities
+        function count_authorities() {
+            fetch(authority_url + "number_certificates")
+                .then((response) => response.json())
+                .then((number_certificates) =>
+                    alert(
+                        "There are " +
+                        number_certificates.number +
+                        " trusted parties available."
+                    )
+                );
+        }
+
+        // Revokes the certificate of given number
+        function revoke() {
+            let revoked_id = parseInt(document.getElementById("RevokedId").value);
+            console.log("Retrieves the number of certificates.");
+            fetch(authority_url + "number_certificates")
+                .then((response) => response.json())
+                .then((number_certificates) => {
+                    console.log("Checking whether the certificate exists.");
+                    if (
+                        revoked_id < number_certificates.number + 1 &&
+                        revoked_id > 0 &&
+                        Number.isInteger(revoked_id)
+                    ) {
+                        console.log("Revoking the certificate.");
+                        fetch(authority_url + "revoke?untrusted=" + revoked_id);
+                        alert("Certificate has been revoked.");
+                    } else {
+                        alert("Certificate doesn't exist.");
+                    }
+                });
+        }
+
+        // Generate a new trusted party
+        function new_trusted() {
+            console.log("Generating new trusted party.");
+            fetch(authority_url + "new_certificate")
+                .then((new_keys) => new_keys.json())
+                .then((new_keys) => {
+                    fetch(age_verification_url + "new_certificate", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(new_keys),
+                    })
+                        .then(() => {
+                            alert(
+                                "New trusted party has been created, keys have been forwarded to trusted party."
+                            );
+                            refresh_values();
+                        });
+                });
+        }
+    </script>
+</body>
+
+</html>
