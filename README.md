@@ -1,9 +1,11 @@
 Démonstrateur de signature de groupes (Français)
 ===
 
-Le LINC met à disposition un démonstrateur de système de preuve d’âge pour permettre l’accès à certaines catégories de sites sans que ne soient partagées d’autres informations identifiantes. Vous trouverez plus d'information sur son fonctionnement dans l'article associé, disponible à l'adresse suivante :(mettre lien)
+Le LINC met à disposition un démonstrateur de système de preuve d’âge pour permettre l’accès à certaines catégories de sites sans que ne soient partagées d’autres informations identifiantes. Vous trouverez plus d'information sur son fonctionnement dans l'article associé, disponible à l'adresse suivante :https://linc.cnil.fr/fr/demonstrateur-du-mecanisme-de-verification-de-lage-respectueux-de-la-vie-privee
 
-Ce démonstrateur est publié sous [licence GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) et sous [licence ouverte 2.0](https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf) (explicitement compatible avec [CC-BY 4.0 FR](https://creativecommons.org/licenses/by/4.0/deed.fr)). Vous pouvez donc librement contribuer à son enrichissement.
+Ce démonstrateur est publié sous [licence GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) et sous [licence ouverte 2.0](https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf) (explicitement compatible avec [CC-BY 4.0 FR](https://creativecommons.org/licenses/by/4.0/deed.fr)). Vous pouvez donc librement contribuer à son enrichissement. Il repose sur la bibliothèque  [Pairing-Based Cryptography](https://crypto.stanford.edu/pbc/)(PBC) publié sous licence [Licence publique générale GNU amoindrie](http://www.gnu.org/licenses/lgpl-3.0.html).
+
+Les primitives cryptographiques de signature de groupe ont été conçues par Olivier Blazy(@Gloupin)du (@LIX_lab/@Polytechnique).
 
 # Comment lancer ce démonstrateur
 
@@ -53,6 +55,21 @@ L'ensemble des fonctions est conçu pour pouvoir fonctionner indépendamments ta
 **Vous avez une idée que vous souhaitez partager avec nous pour améliorer ce projet ?** Contactez l’équipe du laboratoire CNIL par mail - ip(at)cnil.fr - ou via le compte Twitter [@LINCnil](https://twitter.com/LINCnil).
 
 Pour de plus amples informations, voir le fichier ``LICENSE`` inclus.
+
+## Remerciement
+
+Ce démonstrateur est le fruit d'une collaboration entre le [LINC](https://linc.cnil.fr/), le [LIX](https://www.lix.polytechnique.fr) et le [PEReN](https://www.peren.gouv.fr/). 
+
+Nous remercions tous les contributeurs qui nous ont permis de concrétiser ce projet :
+Olivier Blazy
+Solenn Brunet
+Martin Bieri
+Jérôme Gorin
+Amandine Jambert
+Côme Brocas
+Vincent Toubiana
+Et le Peren (Joris Dugépéroux, Victo Amblard, Lucas Verney)
+
 
 English
 ===
