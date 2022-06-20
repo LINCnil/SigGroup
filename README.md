@@ -68,15 +68,17 @@ Jérôme Gorin
 Amandine Jambert
 Côme Brocas
 Vincent Toubiana
-Et le Peren (Joris Dugépéroux, Victo Amblard, Lucas Verney)
+et l'équipe du Peren (Joris Dugépéroux, Victo Amblard, Lucas Verney)
 
 
 English
 ===
 
-LINC provides a proof of age system demonstrator to allow access to certain categories of sites without sharing other identifying information. You will find more information on how it works in the associated article, available at the following address: (link)
+LINC provides a proof of age system demonstrator to allow access to certain categories of sites without sharing other identifying information. You will find more information on how it works in the associated article, available at the following address: https://linc.cnil.fr/fr/demonstrateur-du-mecanisme-de-verification-de-lage-respectueux-de-la-vie-privee
 
-This demonstrator is published under GPLv3 license and under open license 2.0 (explicitly compatible with CC-BY 4.0 FR). You can therefore freely contribute to its enrichment.
+This demonstrator is published under GPLv3 license and under open license 2.0 (explicitly compatible with CC-BY 4.0 FR). You can therefore freely contribute to its enrichment. It is based on  [Pairing-Based Cryptography](https://crypto.stanford.edu/pbc/)(PBC) library and released under the [GNU Lesser General Public License](http://www.gnu.org/licenses/lgpl-3.0.html).
+
+The group signature scheme is designed by Olivier Blazy(@Gloupin) of the (@LIX_lab/@Polytechnique).
 
 # How to launch this demonstrator
 
@@ -119,3 +121,19 @@ This demonstrator is available under the terms of the GPLv3 license and can be e
 **You have an idea you wish to share with us to improve this project ?** Contact the team of the CNIL lab by mail - ip(at)cnil.fr - or *via* the Twitter account [@CNIL](https://twitter.com/CNIL).
 
 For more information, see the `LICENSE` file included.
+
+## Acknowledgment
+
+This demonstrator is the result of a join effort between [LINC](https://linc.cnil.fr/), [LIX](https://www.lix.polytechnique.fr) and  [PEReN](https://www.peren.gouv.fr/). 
+
+
+
+We would like to thank all the contributors who have enabled us to make this project a reality :
+Olivier Blazy
+Solenn Brunet
+Martin Bieri
+Jérôme Gorin
+Amandine Jambert
+Côme Brocas
+Vincent Toubiana
+and the Peren team (Joris Dugépéroux, Victo Amblard, Lucas Verney)
