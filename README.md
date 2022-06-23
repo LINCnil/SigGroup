@@ -68,7 +68,7 @@ Jérôme Gorin
 Amandine Jambert
 Côme Brocas
 Vincent Toubiana
-et l'équipe du Peren (Joris Dugépéroux, Victo Amblard, Lucas Verney)
+et l'équipe du Peren (Joris Duguépéroux, Victor Amblard, Lucas Verney)
 
 
 English
@@ -136,4 +136,4 @@ Jérôme Gorin
 Amandine Jambert
 Côme Brocas
 Vincent Toubiana
-and the Peren team (Joris Dugépéroux, Victo Amblard, Lucas Verney)
+and the Peren team (Joris Duguépéroux, Victor Amblard, Lucas Verney)
