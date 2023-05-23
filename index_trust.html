@@ -150,27 +150,31 @@
             }
 
 
-            fetch(authority_url + "number_certificates")
+            fetch(authority_url + "certificates")
                 .then((response) => response.json())
-                .then((number_certificates) => {
+                .then(({certificates}) => {
                     let trustedId = document.getElementById("trustedId");
                     let thirdparty_list = document.getElementById("thirdparty_list");
 
                     removeOptions(trustedId);
                     removeRows(thirdparty_list);
-                    for (let i = 1; i < number_certificates.number+1; i++) {
-                        let option = document.createElement("option");
-                        option.value = i;
-                        option.text = i;
-                        trustedId.add(option);
 
-                        let newRow = thirdparty_list.insertRow(-1);
-                        let newCellid = newRow.insertCell(0);
-                        let newTextCelldid = document.createTextNode(i);
-                        newCellid.appendChild(newTextCelldid);
-                    }
-                }
-                );
+                    certificates.forEach(
+                        (certificate) => {
+                            let option = document.createElement("option");
+                            option.value = certificate.id;
+                            option.text = certificate.id;
+                            trustedId.add(option);
+
+                            const newRow = thirdparty_list.insertRow(-1);
+                            const newCellid = newRow.insertCell(0);
+                            const emoji = certificate.revoked ? "❌" : "✅"
+                            cellText = `${certificate.id} ${emoji}`
+                            const newTextCelldid = document.createTextNode(cellText);
+                            newCellid.appendChild(newTextCelldid);
+                        }
+                    );
+                });
 
             fetch(age_verifier_url + "list_users")
                 .then((response) => response.json())

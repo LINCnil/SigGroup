@@ -54,6 +54,23 @@ def number_certificates():
     return bytes(json.dumps({"number": number}), ENCODING)
 
 
+# Return list of certificates with their revoked status (boolean)
+@app.get("/certificates")
+def number_certificates():
+    all_certificate_ids = os.listdir("./trusted_from_authority/")
+    revoked_certificate_ids = os.listdir("./revoked/")
+    return bytes(
+        json.dumps({"certificates": [
+            {
+                "id": certificate_id,
+                "revoked": certificate_id in revoked_certificate_ids,
+            }
+            for certificate_id in sorted(all_certificate_ids)
+        ]}), ENCODING
+    )
+    
+
+
 # Return a list of the revokation tokens previously emitted
 @app.get("/revoked_list")
 def revoked_list():
