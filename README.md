@@ -1,7 +1,7 @@
 Démonstrateur de signature de groupes (Français)
 ===
 
-Le LINC met à disposition un démonstrateur de système de preuve d’âge pour permettre l’accès à certaines catégories de sites sans que ne soient partagées d’autres informations identifiantes. Vous trouverez plus d'information sur son fonctionnement dans l'article associé, disponible à l'adresse suivante :https://linc.cnil.fr/fr/demonstrateur-du-mecanisme-de-verification-de-lage-respectueux-de-la-vie-privee
+Le LINC met à disposition un démonstrateur de système de preuve d’âge pour permettre l’accès à certaines catégories de sites sans que ne soient partagées d’autres informations identifiantes. Vous trouverez plus d'information sur son fonctionnement dans l'article associé, disponible à l'adresse suivante :https://linc.cnil.fr/demonstrateur-du-mecanisme-de-verification-de-lage-respectueux-de-la-vie-privee
 
 Ce démonstrateur est publié sous [licence GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) et sous [licence ouverte 2.0](https://www.etalab.gouv.fr/wp-content/uploads/2017/04/ETALAB-Licence-Ouverte-v2.0.pdf) (explicitement compatible avec [CC-BY 4.0 FR](https://creativecommons.org/licenses/by/4.0/deed.fr)). Vous pouvez donc librement contribuer à son enrichissement. Il repose sur la bibliothèque  [Pairing-Based Cryptography](https://crypto.stanford.edu/pbc/)(PBC) publié sous licence [Licence publique générale GNU amoindrie](http://www.gnu.org/licenses/lgpl-3.0.html).
 
@@ -74,7 +74,7 @@ et l'équipe du Peren (Joris Duguépéroux, Victor Amblard, Lucas Verney)
 English
 ===
 
-LINC provides a proof of age system demonstrator to allow access to certain categories of sites without sharing other identifying information. You will find more information on how it works in the associated article, available at the following address: https://linc.cnil.fr/fr/demonstrateur-du-mecanisme-de-verification-de-lage-respectueux-de-la-vie-privee
+LINC provides a proof of age system demonstrator to allow access to certain categories of sites without sharing other identifying information. You will find more information on how it works in the associated article, available at the following address: https://linc.cnil.fr/demonstrateur-du-mecanisme-de-verification-de-lage-respectueux-de-la-vie-privee
 
 This demonstrator is published under GPLv3 license and under open license 2.0 (explicitly compatible with CC-BY 4.0 FR). You can therefore freely contribute to its enrichment. It is based on  [Pairing-Based Cryptography](https://crypto.stanford.edu/pbc/)(PBC) library and released under the [GNU Lesser General Public License](http://www.gnu.org/licenses/lgpl-3.0.html).
 
