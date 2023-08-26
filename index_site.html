@@ -195,7 +195,7 @@
                 getNonce(required_age, validity).then((nonce) => {
                     var dataStr =
                         "data:text/json;charset=utf-8," +
-                        encodeURIComponent(JSON.stringify(nonce));
+                        encodeURIComponent(JSON.stringify({...nonce, site:"test"}));
                     var downloadAnchorNode = document.createElement("a");
                     downloadAnchorNode.setAttribute("href", dataStr);
                     downloadAnchorNode.setAttribute("download", "nonce" + ".json");

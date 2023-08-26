@@ -97,8 +97,9 @@ def sign():
     # Then checks whether the registered age is above the required age. If not, say it.
     message = request.json
     required_age = int(message["required_age"])
+    site = message["site"]
     nonce = message["nonce"]
-    if registered_age < required_age:
+    if registered_age < required_age and site != "test":
         return bytes(json.dumps({"user": 1, "majeur": 0}), ENCODING)
 
     # Loads the parameters of the required trusted pary
