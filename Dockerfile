@@ -11,4 +11,5 @@ RUN cd SigGroup/ && cp parameters.yaml.docker parameters.yaml && make && pip ins
 
 EXPOSE 9091 9092 9093
 RUN apt-get clean 
+RUN chmod +x /SigGroup/launch.sh
 CMD cd SigGroup/ && LD_LIBRARY_PATH=/usr/local/lib /SigGroup/launch.sh
